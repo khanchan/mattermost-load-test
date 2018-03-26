@@ -124,6 +124,7 @@
   revision = "d47a5532a7bc36ad7b2b8ec3eebe24e975154f94"
 
 [[projects]]
+  branch = "master"
   name = "github.com/mattermost/mattermost-server"
   packages = [
     "einterfaces",
@@ -131,8 +132,7 @@
     "utils",
     "utils/markdown"
   ]
-  revision = "d1ed79a66c7930020b7fda046a11050f5890c84e"
-  version = "v4.8.0"
+  revision = "4a69c277a620308959ad6870d4e7c8240f9a166d"
 
 [[projects]]
   name = "github.com/mattn/go-runewidth"
@@ -356,6 +356,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0137ec7e1feb3fac4e49c55d517836cc77f3990de3dbf992e9b7f80deaf7b534"
+  inputs-digest = "352808eea6de9dcdfa198033d56fe4791978a51ac9e9fcfc4b72a16136341c31"
   solver-name = "gps-cdcl"
   solver-version = 1

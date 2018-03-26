@@ -52,6 +52,11 @@ var tests []TestItem = []TestItem{
 		ShortDesc: "Test leaving and joining a team while under load",
 		Test:      &loadtest.TestLeaveJoinTeam,
 	},
+	{
+		Name:      "autocomplete",
+		ShortDesc: "Test autocomplete",
+		Test:      &loadtest.TestAutocomplete,
+	},
 }
 
 func main() {
