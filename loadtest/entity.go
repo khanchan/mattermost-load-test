@@ -58,6 +58,7 @@ func (ec *EntityConfig) Initialize() error {
 		channelChoice := []randutil.Choice{}
 		for i, channel := range teamChannels {
 			teamChannelsData = append(teamChannelsData, UserChannelImportData{
+				Id:   channel.Id,
 				Name: channel.Name,
 				// Roles
 			})

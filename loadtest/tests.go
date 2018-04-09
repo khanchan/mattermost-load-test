@@ -79,7 +79,8 @@ func actionGetStatuses(c *EntityConfig) {
 		if team == nil || channel == nil {
 			return
 		}
-		channelId := c.ChannelMap[team.Name+channel.Name]
+		// channelId := c.ChannelMap[team.Name+channel.Name]
+		channelId := channel.Id
 
 		if channelId == "" {
 			cmdlog.Error("Unable to get channel from map")
@@ -171,7 +172,8 @@ func actionPost(c *EntityConfig) {
 	if team == nil || channel == nil {
 		return
 	}
-	channelId := c.ChannelMap[team.Name+channel.Name]
+	// channelId := c.ChannelMap[team.Name+channel.Name]
+	channelId := channel.Id
 
 	if channelId == "" {
 		cmdlog.Error("Unable to get channel from map")
@@ -222,11 +224,12 @@ func actionGetChannel(c *EntityConfig) {
 	if team == nil || channel == nil {
 		return
 	}
-	channelId, ok := c.ChannelMap[team.Name+channel.Name]
-	if !ok {
-		cmdlog.Errorf("No entry in channel map for %s+%s", team.Name, channel.Name)
-		return
-	}
+	channelId := channel.Id
+	// channelId, ok := c.ChannelMap[team.Name+channel.Name]
+	// if !ok {
+	// 	cmdlog.Errorf("No entry in channel map for %s+%s", team.Name, channel.Name)
+	// 	return
+	// }
 
 	if _, resp := c.Client.ViewChannel("me", &model.ChannelView{
 		ChannelId:     channelId,
@@ -299,7 +302,8 @@ func actionPostWebhook(c *EntityConfig) {
 		if team == nil || channel == nil {
 			return
 		}
-		channelId := c.ChannelMap[team.Name+channel.Name]
+		// channelId := c.ChannelMap[team.Name+channel.Name]
+		channelId := channel.Id
 
 		webhook, resp := c.Client.CreateIncomingWebhook(&model.IncomingWebhook{
 			ChannelId:   channelId,

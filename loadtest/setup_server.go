@@ -103,21 +103,21 @@ func SetupServer(cfg *LoadTestConfig) (*ServerSetupData, error) {
 				return nil, resp.Error
 			} else {
 				townSquareIdMap[team.Name] = channel.Id
-				channelIdMap[team.Name+channel.Name] = channel.Id
+				// channelIdMap[team.Name+channel.Name] = channel.Id
 			}
 
-			numRecieved := 200
-			for page := 0; numRecieved == 200; page++ {
-				if channels, resp2 := adminClient.GetPublicChannelsForTeam(team.Id, page, 200, ""); resp2.Error != nil {
-					cmdlog.Errorf("Could not get public channels for team %v. Error: %v", team.Id, resp2.Error.Error())
-					return nil, resp2.Error
-				} else {
-					numRecieved = len(channels)
-					for _, channel := range channels {
-						channelIdMap[team.Name+channel.Name] = channel.Id
-					}
-				}
-			}
+			// numRecieved := 200
+			// for page := 0; numRecieved == 200; page++ {
+			// 	if channels, resp2 := adminClient.GetPublicChannelsForTeam(team.Id, page, 200, ""); resp2.Error != nil {
+			// 		cmdlog.Errorf("Could not get public channels for team %v. Error: %v", team.Id, resp2.Error.Error())
+			// 		return nil, resp2.Error
+			// 	} else {
+			// 		numRecieved = len(channels)
+			// 		for _, channel := range channels {
+			// 			channelIdMap[team.Name+channel.Name] = channel.Id
+			// 		}
+			// 	}
+			// }
 		}
 	}
 
