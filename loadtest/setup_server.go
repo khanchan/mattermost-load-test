@@ -74,12 +74,12 @@ func SetupServer(cfg *LoadTestConfig) (*ServerSetupData, error) {
 				return nil, err
 			}
 			cmdlog.Info("Running bulk import.")
-			if success, output := cmdrun.RunPlatformCommand("import bulk --workers 64 --apply loadtestusers.json"); !success {
-				releaseBulkloadLock(adminClient)
-				return nil, fmt.Errorf("Failed to bulk import users: " + output)
-			} else {
-				cmdlog.Info(output)
-			}
+			// if success, output := cmdrun.RunPlatformCommand("import bulk --workers 64 --apply loadtestusers.json"); !success {
+			// 	releaseBulkloadLock(adminClient)
+			// 	return nil, fmt.Errorf("Failed to bulk import users: " + output)
+			// } else {
+			// 	cmdlog.Info(output)
+			// }
 			releaseBulkloadLock(adminClient)
 		}
 	}
@@ -97,8 +97,17 @@ func SetupServer(cfg *LoadTestConfig) (*ServerSetupData, error) {
 	} else {
 		for _, team := range teams {
 			teamIdMap[team.Name] = team.Id
+
+			if channel, resp := adminClient.GetChannelByName(team.Id, "town-square", ""); resp.Error != nil {
+				cmdlog.Errorf("Could not get town-square channel for team %v: %v", team.Id, resp.Error.Error())
+				return nil, resp.Error
+			} else {
+				townSquareIdMap[team.Name] = channel.Id
+				channelIdMap[team.Name+channel.Name] = channel.Id
+			}
+
 			numRecieved := 200
-			for page := 0; numRecieved == 200; page++ {
+			for page := 0; numRecieved == 200 && len(channelIdMap) < 10000; page++ {
 				if channels, resp2 := adminClient.GetPublicChannelsForTeam(team.Id, page, 200, ""); resp2.Error != nil {
 					cmdlog.Errorf("Could not get public channels for team %v. Error: %v", team.Id, resp2.Error.Error())
 					return nil, resp2.Error
@@ -106,10 +115,6 @@ func SetupServer(cfg *LoadTestConfig) (*ServerSetupData, error) {
 					numRecieved = len(channels)
 					for _, channel := range channels {
 						channelIdMap[team.Name+channel.Name] = channel.Id
-						if channel.Name == "town-square" {
-							cmdlog.Infof("Found town-square for %v", team.Name)
-							townSquareIdMap[team.Name] = channel.Id
-						}
 					}
 				}
 			}
@@ -209,6 +214,7 @@ func WaitForServer(serverURL string) {
 }
 
 func getBulkloadLock(adminClient *model.Client4) bool {
+	return true
 	if user, resp := adminClient.GetMe(""); resp.Error != nil {
 		cmdlog.Errorf("Unable to get admin user while trying to get lock 1: %v", resp.Error.Error())
 		return false
