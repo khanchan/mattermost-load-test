@@ -98,7 +98,7 @@ func SetupServer(cfg *LoadTestConfig) (*ServerSetupData, error) {
 		for _, team := range teams {
 			teamIdMap[team.Name] = team.Id
 
-			if channel, resp := adminClient.GetChannelByName(team.Id, "town-square", ""); resp.Error != nil {
+			if channel, resp := adminClient.GetChannelByName("town-square", team.Id, ""); resp.Error != nil {
 				cmdlog.Errorf("Could not get town-square channel for team %v: %v", team.Id, resp.Error.Error())
 				return nil, resp.Error
 			} else {
