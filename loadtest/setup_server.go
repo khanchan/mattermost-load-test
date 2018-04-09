@@ -252,6 +252,7 @@ func getBulkloadLock(adminClient *model.Client4) bool {
 }
 
 func releaseBulkloadLock(adminClient *model.Client4) {
+	return
 	cmdlog.Info("Releasing bulkload lock")
 	if user, resp := adminClient.GetMe(""); resp.Error != nil {
 		cmdlog.Errorf("Unable to get admin user while trying to release lock. Note that system will be in a bad state. You need to change the system admin user's nickname to blank to fix things. Error: %v", resp.Error.Error())
