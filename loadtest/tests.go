@@ -222,7 +222,11 @@ func actionGetChannel(c *EntityConfig) {
 	if team == nil || channel == nil {
 		return
 	}
-	channelId := c.ChannelMap[team.Name+channel.Name]
+	channelId, ok := c.ChannelMap[team.Name+channel.Name]
+	if !ok {
+		cmdlog.Errorf("No entry in channel map for %s+%s", team.Name, channel.Name)
+		return
+	}
 
 	if _, resp := c.Client.ViewChannel("me", &model.ChannelView{
 		ChannelId:     channelId,
