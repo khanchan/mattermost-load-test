@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/mattermost/mattermost-load-test/cmdlog"
 	"github.com/mattermost/mattermost-load-test/randutil"
 	"github.com/mattermost/mattermost-server/model"
@@ -31,6 +33,80 @@ type EntityConfig struct {
 	StopChannel         <-chan bool
 	StopWaitGroup       *sync.WaitGroup
 	Info                map[string]interface{}
+}
+
+func (ec *EntityConfig) Initialize() error {
+	user, response := ec.Client.GetMe("")
+	if response.Error != nil {
+		return errors.Wrap(response.Error, "failed to fetch current user")
+	}
+
+	teams, response := ec.Client.GetTeamsForUser(user.Id, "")
+	if response.Error != nil {
+		return errors.Wrapf(response.Error, "failed to fetch teams for user %s", user.Id)
+	}
+
+	teamData := []UserTeamImportData{}
+	teamChoice := []randutil.Choice{}
+	for i, team := range teams {
+		teamChannels, response := ec.Client.GetChannelsForTeamForUser(team.Id, user.Id, "")
+		if response.Error != nil {
+			return errors.Wrapf(response.Error, "failed to fetch user channels for team %s", team.Id)
+		}
+
+		teamChannelsData := []UserChannelImportData{}
+		channelChoice := []randutil.Choice{}
+		for i, channel := range teamChannels {
+			teamChannelsData = append(teamChannelsData, UserChannelImportData{
+				Name: channel.Name,
+				// Roles
+			})
+			channelChoice = append(channelChoice, randutil.Choice{
+				Item: i,
+				// TODO: Weighted channels
+				Weight: 1,
+			})
+		}
+
+		teamData = append(teamData, UserTeamImportData{
+			Name: team.Name,
+			// Roles         string                  `json:"roles"`
+			Channels:      teamChannelsData,
+			ChannelChoice: channelChoice,
+		})
+		teamChoice = append(teamChoice, randutil.Choice{
+			Item: i,
+			// TODO: Weighted channels
+			Weight: 1,
+		})
+	}
+
+	ec.UserData = UserImportData{
+		Username:    user.Username,
+		Email:       user.Email,
+		AuthService: user.AuthService,
+		AuthData:    pToS(user.AuthData),
+		Password:    user.Password,
+		Nickname:    user.Nickname,
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
+		Position:    user.Position,
+		Roles:       user.Roles,
+		Locale:      user.Locale,
+
+		Teams:      teamData,
+		TeamChoice: teamChoice,
+
+		// Theme              string `json:"theme,omitempty"`
+		// SelectedFont       string `json:"display_font,omitempty"`
+		// UseMilitaryTime    string `json:"military_time,omitempty"`
+		// NameFormat         string `json:"teammate_name_display,omitempty"`
+		// CollapsePreviews   string `json:"link_previews,omitempty"`
+		// MessageDisplay     string `json:"message_display,omitempty"`
+		// ChannelDisplayMode string `json:"channel_display_mode,omitempty"`
+	}
+
+	return nil
 }
 
 func runEntity(ec *EntityConfig) {
@@ -174,4 +250,12 @@ func (config *EntityConfig) SendStatusActionRecieve(details string) {
 
 func (config *EntityConfig) SendStatusStopped(details string) {
 	config.SendStatus(STATUS_STOPPED, nil, details)
+}
+
+func pToS(s *string) string {
+	if s == nil {
+		return ""
+	}
+
+	return *s
 }

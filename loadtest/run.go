@@ -126,7 +126,6 @@ func RunTest(test *TestRun) error {
 				EntityNumber:        entityNum,
 				EntityName:          usertype.Entity.Name,
 				EntityActions:       usertype.Entity.Actions,
-				UserData:            serverData.BulkloadResult.Users[entityNum],
 				ChannelMap:          serverData.ChannelIdMap,
 				TeamMap:             serverData.TeamIdMap,
 				TownSquareMap:       serverData.TownSquareIdMap,
@@ -139,6 +138,10 @@ func RunTest(test *TestRun) error {
 				StopChannel:         stopEntity,
 				StopWaitGroup:       &waitEntity,
 				Info:                make(map[string]interface{}),
+			}
+
+			if err := entityConfig.Initialize(); err != nil {
+				cmdlog.Error("failed to initialize entity: " + err.Error())
 			}
 
 			waitEntity.Add(1)
