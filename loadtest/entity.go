@@ -51,7 +51,7 @@ func (ec *EntityConfig) Initialize() error {
 	for i, team := range teams {
 		teamChannels, response := ec.Client.GetChannelsForTeamForUser(team.Id, user.Id, "")
 		if response.Error != nil {
-			return errors.Wrapf(response.Error, "failed to fetch user channels for team %s", team.Id)
+			return errors.Wrapf(response.Error, "failed to fetch user %s channels for team %s", user.Id, team.Id)
 		}
 
 		teamChannelsData := []UserChannelImportData{}
