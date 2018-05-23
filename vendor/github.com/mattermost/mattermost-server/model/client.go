@@ -143,7 +143,7 @@ func (c *Client) GetFileRoute(fileId string) string {
 func (c *Client) DoPost(url, data, contentType string) (*http.Response, *AppError) {
 	rq, _ := http.NewRequest("POST", c.Url+url, strings.NewReader(data))
 	rq.Header.Set("Content-Type", contentType)
-	rq.Close = true
+	// rq.Close = true
 
 	if rp, err := c.HttpClient.Do(rq); err != nil {
 		return nil, NewAppError(url, "model.client.connecting.app_error", nil, err.Error(), 0)
@@ -157,7 +157,7 @@ func (c *Client) DoPost(url, data, contentType string) (*http.Response, *AppErro
 
 func (c *Client) DoApiPost(url string, data string) (*http.Response, *AppError) {
 	rq, _ := http.NewRequest("POST", c.ApiUrl+url, strings.NewReader(data))
-	rq.Close = true
+	// rq.Close = true
 
 	if len(c.AuthToken) > 0 {
 		rq.Header.Set(HEADER_AUTH, c.AuthType+" "+c.AuthToken)
@@ -175,7 +175,7 @@ func (c *Client) DoApiPost(url string, data string) (*http.Response, *AppError) 
 
 func (c *Client) DoApiGet(url string, data string, etag string) (*http.Response, *AppError) {
 	rq, _ := http.NewRequest("GET", c.ApiUrl+url, strings.NewReader(data))
-	rq.Close = true
+	// rq.Close = true
 
 	if len(etag) > 0 {
 		rq.Header.Set(HEADER_ETAG_CLIENT, etag)
@@ -1049,7 +1049,7 @@ func (c *Client) SaveComplianceReport(job *Compliance) (*Result, *AppError) {
 func (c *Client) DownloadComplianceReport(id string) (*Result, *AppError) {
 	var rq *http.Request
 	rq, _ = http.NewRequest("GET", c.ApiUrl+"/admin/download_compliance_report/"+id, nil)
-	rq.Close = true
+	// rq.Close = true
 
 	if len(c.AuthToken) > 0 {
 		rq.Header.Set(HEADER_AUTH, "BEARER "+c.AuthToken)
@@ -1554,7 +1554,7 @@ func (c *Client) UploadPostAttachment(data []byte, channelId string, filename st
 func (c *Client) uploadFile(url string, data []byte, contentType string) (*Result, *AppError) {
 	rq, _ := http.NewRequest("POST", url, bytes.NewReader(data))
 	rq.Header.Set("Content-Type", contentType)
-	rq.Close = true
+	// rq.Close = true
 
 	if len(c.AuthToken) > 0 {
 		rq.Header.Set(HEADER_AUTH, "BEARER "+c.AuthToken)
@@ -2192,7 +2192,7 @@ func (c *Client) CreateEmoji(emoji *Emoji, image []byte, filename string) (*Emoj
 
 	rq, _ := http.NewRequest("POST", c.ApiUrl+c.GetEmojiRoute()+"/create", body)
 	rq.Header.Set("Content-Type", writer.FormDataContentType())
-	rq.Close = true
+	// rq.Close = true
 
 	if len(c.AuthToken) > 0 {
 		rq.Header.Set(HEADER_AUTH, "BEARER "+c.AuthToken)
@@ -2236,7 +2236,7 @@ func (c *Client) UploadCertificateFile(data []byte, contentType string) *AppErro
 	url := c.ApiUrl + "/admin/add_certificate"
 	rq, _ := http.NewRequest("POST", url, bytes.NewReader(data))
 	rq.Header.Set("Content-Type", contentType)
-	rq.Close = true
+	// rq.Close = true
 
 	if len(c.AuthToken) > 0 {
 		rq.Header.Set(HEADER_AUTH, "BEARER "+c.AuthToken)
