@@ -24,6 +24,8 @@ type RouteStatResults struct {
 	Min                float64
 	Mean               float64
 	Median             float64
+	Percentile90       float64
+	Percentile95       float64
 	InterQuartileRange float64
 }
 
@@ -36,6 +38,8 @@ type RouteStats struct {
 	Min                float64
 	Mean               float64
 	Median             float64
+	Percentile90       float64
+	Percentile95       float64
 	InterQuartileRange float64
 }
 
@@ -67,6 +71,8 @@ func (s *RouteStats) CalcResults() {
 	s.Min, _ = stats.Min(s.Duration)
 	s.Mean, _ = stats.Mean(s.Duration)
 	s.Median, _ = stats.Median(s.Duration)
+	s.Percentile90, _ = stats.Percentile(s.Duration, 90)
+	s.Percentile95, _ = stats.Percentile(s.Duration, 95)
 	s.InterQuartileRange, _ = stats.InterQuartileRange(s.Duration)
 }
 
@@ -91,7 +97,6 @@ var teamPathRegex *regexp.Regexp = regexp.MustCompile("/teams/[a-z0-9]{26}/")
 var channelPathRegex *regexp.Regexp = regexp.MustCompile("/channels/[a-z0-9]{26}/")
 var postPathRegex *regexp.Regexp = regexp.MustCompile("/posts/[a-z0-9]{26}/")
 var filePathRegex *regexp.Regexp = regexp.MustCompile("/files/[a-z0-9]{26}/")
-var userPathRegex *regexp.Regexp = regexp.MustCompile("/users/[a-z0-9]{26}/")
 var teamMembersForUserPathRegex *regexp.Regexp = regexp.MustCompile("/teams/[a-z0-9]{26}/members/[a-z0-9]{26}")
 
 func processCommonPaths(path string) string {
@@ -101,7 +106,6 @@ func processCommonPaths(path string) string {
 	result = channelPathRegex.ReplaceAllString(result, "/channels/CID/")
 	result = postPathRegex.ReplaceAllString(result, "/posts/PID/")
 	result = filePathRegex.ReplaceAllString(result, "/files/PID/")
-	result = userPathRegex.ReplaceAllString(result, "/users/UID/")
 	return result
 }
 
@@ -132,6 +136,8 @@ Max Response Time: {{.Max}}ms
 Min Response Time: {{.Min}}ms
 Mean Response Time: {{printf "%.2f" .Mean}}ms
 Median Response Time: {{printf "%.2f" .Median}}ms
+90 Percentile: {{printf "%.2f" .Percentile90}}ms
+95 Percentile: {{printf "%.2f" .Percentile95}}ms
 Inter Quartile Range: {{.InterQuartileRange}}
 
 `
