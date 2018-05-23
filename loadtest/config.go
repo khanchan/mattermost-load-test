@@ -36,23 +36,26 @@ type UserEntitiesConfiguration struct {
 }
 
 type ConnectionConfiguration struct {
-	ServerURL            string
-	WebsocketURL         string
-	PProfURL             string
-	DriverName           string
-	DataSource           string
-	DBEndpoint           string // deprecated
-	LocalCommands        bool
-	SSHHostnamePort      string
-	SSHUsername          string
-	SSHPassword          string
-	SSHKey               string
-	MattermostInstallDir string
-	ConfigFileLoc        string
-	AdminEmail           string
-	AdminPassword        string
-	SkipBulkload         bool
-	WaitForServerStart   bool
+	ServerURL                   string
+	WebsocketURL                string
+	PProfURL                    string
+	DriverName                  string
+	DataSource                  string
+	DBEndpoint                  string // deprecated
+	LocalCommands               bool
+	SSHHostnamePort             string
+	SSHUsername                 string
+	SSHPassword                 string
+	SSHKey                      string
+	MattermostInstallDir        string
+	ConfigFileLoc               string
+	AdminEmail                  string
+	AdminPassword               string
+	SkipBulkload                bool
+	WaitForServerStart          bool
+	MaxIdleConns                int
+	MaxIdleConnsPerHost         int
+	IdleConnTimeoutMilliseconds int
 }
 
 type ResultsConfiguration struct {
@@ -78,6 +81,10 @@ func GetConfig() (*LoadTestConfig, error) {
 	viper.SetEnvPrefix("mmloadtest")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
+
+	viper.SetDefault("ConnectionConfiguration.MaxIdleConns", 100)
+	viper.SetDefault("ConnectionConfiguration.MaxIdleConnsPerHost", 128)
+	viper.SetDefault("ConnectionConfiguration.IdleConnTimeoutMilliseconds", 90000)
 
 	err := viper.ReadInConfig()
 	if err != nil {
